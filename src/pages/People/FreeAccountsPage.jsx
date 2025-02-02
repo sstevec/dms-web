@@ -42,7 +42,7 @@ const FreeAccountsPage = () => {
         };
 
         fetchUserInfo();
-    }, [email]);
+    }, [userId]);
 
     // Handle Search
     const handleSearch = (event) => {

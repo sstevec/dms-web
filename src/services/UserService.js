@@ -69,6 +69,32 @@ const UserService = {
     },
 
     /**
+     * Accept an invitation.
+     * @param {string} providerEmail - The sender's email.
+     * @param {string} userId - The recipient's id.
+     * @returns {Promise<string>} - Promise resolving to a success message.
+     */
+    acceptInvitation: async (providerEmail, userId) => {
+        const response = await axiosInstance.post(`${API_URL}/accept-invitation`, null, {
+            params: { providerEmail, userId },
+        });
+        return response.data;
+    },
+
+    /**
+     * Delete the link between current user with another user.
+     * @param {string} parentId - The provider's id
+     * @param {string} childId - The distributor's id.
+     * @returns {Promise<string>} - Promise resolving to a success message.
+     */
+    deleteLink: async (parentId, childId) => {
+        const response = await axiosInstance.delete(`${API_URL}/delete-link`, {
+            params: { parentId, childId },
+        });
+        return response.data;
+    },
+
+    /**
      * Get distributors of the current user.
      * @param {string} userId - The current user's ID.
      * @param {boolean} includeFree - need to include those free accounts or not

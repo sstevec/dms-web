@@ -30,8 +30,8 @@ const menuItems = [
         icon: <ProductIcon/>,
         subItems: [
             {name: 'Registered', path: '/home/product/registered'},
-            {name: 'Authorized', path: '/home/product/authorized'},
-            {name: 'Group Management', path: '/home/product/group-management'},
+            {name: 'Grouping', path: '/home/product/authorized'},
+            {name: 'Group Assignment', path: '/home/product/group-assignment'},
         ],
     },
     {

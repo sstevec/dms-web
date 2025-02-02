@@ -23,10 +23,11 @@ import UserService from '../../services/UserService';
 const LinkedAccountsPage = () => {
     const [accounts, setAccounts] = useState([]);
     const [filteredAccounts, setFilteredAccounts] = useState([]);
-    const [filters, setFilters] = useState([]);
+    const [filters, setFilters] = useState(['Free Accounts']);
+    const [isFilterDialogOpen, setIsFilterDialogOpen] = useState(false);
     const [searchKeyword, setSearchKeyword] = useState('');
     const [isInviteDialogOpen, setIsInviteDialogOpen] = useState(false);
-    const [isFilterDialogOpen, setIsFilterDialogOpen] = useState(false);
+
     const [guestEmail, setGuestEmail] = useState('');
     const email = localStorage.getItem('dms_login_email');
     const userId = localStorage.getItem("dms_user_id");
@@ -138,7 +139,7 @@ const LinkedAccountsPage = () => {
                         <TableRow key={account.id}>
                             <TableCell>{account.name}</TableCell>
                             <TableCell>{account.email}</TableCell>
-                            <TableCell>{account.role}</TableCell>
+                            <TableCell>{account.relation}</TableCell>
                             <TableCell>{account.createdAt}</TableCell>
                         </TableRow>
                     ))}

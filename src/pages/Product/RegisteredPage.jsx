@@ -29,8 +29,11 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import ProductService from '../../services/ProductService';
 import {ClearOutlined} from "@mui/icons-material";
 import EditTwoToneIcon from "@mui/icons-material/EditTwoTone";
+import {useOutletContext} from "react-router-dom";
 
 const RegisteredPage = () => {
+    const { showAlert } = useOutletContext();
+
     const [products, setProducts] = useState([]);
     const [filteredProducts, setFilteredProducts] = useState([]);
     const [searchKeyword, setSearchKeyword] = useState('');
@@ -42,7 +45,7 @@ const RegisteredPage = () => {
     const [drawerMode, setDrawerMode] = useState("");
     const [editProductId, setEditProductId] = useState("");
     const [productToDelete, setProductToDelete] = useState(null);
-    const [newProduct, setNewProduct] = useState({name: '', description: '', properties: []});
+    const [newProduct, setNewProduct] = useState({name: '', description: '', productDetail: []});
     const userId = localStorage.getItem('dms_user_id');
 
 
@@ -52,8 +55,7 @@ const RegisteredPage = () => {
 
             // Parse productDetail and extract unique keys
             const parsedProducts = productList.map((product) => {
-                const detailDict = JSON.parse(product.productDetail || '{}');
-                product.productDetail = detailDict; // Store parsed JSON back to object
+                product.productDetail = JSON.parse(product.productDetail || '{}'); // Store parsed JSON back to object
                 return product;
             });
 
@@ -66,7 +68,7 @@ const RegisteredPage = () => {
             setFilteredProducts(parsedProducts);
             setAllHeaders(uniqueKeys);
         } catch (error) {
-            console.error('Error fetching registered products:', error);
+            showAlert('Error fetching registered products');
         }
     };
 
@@ -84,22 +86,22 @@ const RegisteredPage = () => {
     const handleAddProperty = () => {
         setNewProduct((prev) => ({
             ...prev,
-            properties: [...prev.properties, {propertyName: '', propertyValue: ''}],
+            productDetail: [...prev.productDetail, {propertyName: '', propertyValue: ''}],
         }));
     };
 
     // Handle Property Input Changes
     const handlePropertyChange = (index, field, value) => {
-        const updatedProperties = [...newProduct.properties];
+        const updatedProperties = [...newProduct.productDetail];
         updatedProperties[index][field] = value;
-        setNewProduct((prev) => ({...prev, properties: updatedProperties}));
+        setNewProduct((prev) => ({...prev, productDetail: updatedProperties}));
     };
 
     // Delete a Property Row
     const handleDeleteProperty = (index) => {
-        const updatedProperties = [...newProduct.properties];
+        const updatedProperties = [...newProduct.productDetail];
         updatedProperties.splice(index, 1);
-        setNewProduct((prev) => ({...prev, properties: updatedProperties}));
+        setNewProduct((prev) => ({...prev, productDetail: updatedProperties}));
     };
 
     const handleDrawOpen = (isAdd) => {
@@ -110,12 +112,12 @@ const RegisteredPage = () => {
     // Handle Submit for Adding a New Product
     const handleAddProduct = async () => {
         try {
-            // Filter properties to skip empty names or values
-            const validProperties = newProduct.properties.filter(
+            // Filter productDetail to skip empty names or values
+            const validProperties = newProduct.productDetail.filter(
                 (prop) => prop.propertyName.trim() && prop.propertyValue.trim()
             );
 
-            // If no valid properties and productDetail is expected, initialize as an empty object
+            // If no valid productDetail and productDetail is expected, initialize as an empty object
             const productDetail = validProperties.length
                 ? JSON.stringify(
                     validProperties.reduce((acc, prop) => {
@@ -131,6 +133,7 @@ const RegisteredPage = () => {
                     newProduct.name.trim(),
                     newProduct.description.trim(),
                     productDetail,
+                    '{}',
                     userId
                 );
 
@@ -150,7 +153,7 @@ const RegisteredPage = () => {
                 ...prev,
                 name: '',
                 description: '',
-                properties: prev.properties.map((prop) => ({
+                productDetail: prev.productDetail.map((prop) => ({
                     propertyName: prop.propertyName, // Retain the property name
                     propertyValue: '', // Clear the property value
                 })),
@@ -249,7 +252,7 @@ const RegisteredPage = () => {
             />
 
             <Typography variant="h6" sx={{mt: 2}}>Properties</Typography>
-            {newProduct.properties.map((property, index) => (
+            {newProduct.productDetail.map((property, index) => (
                 <Box key={index} sx={{display: 'flex', gap: 1, alignItems: 'center', mb: 1}}>
                     <TextField
                         label="Property Name"
@@ -392,7 +395,7 @@ const RegisteredPage = () => {
                                         setNewProduct({
                                             name: product.name,
                                             description: product.description,
-                                            properties: Object.entries(product.productDetail || {}).map(
+                                            productDetail: Object.entries(product.productDetail || {}).map(
                                                 ([key, value]) => ({propertyName: key, propertyValue: value})
                                             ),
                                         });
@@ -419,6 +422,7 @@ const RegisteredPage = () => {
                 anchor="right"
                 open={isDrawerOpen}
                 onOpen={() => setIsDrawerOpen(true)}
+                onClose={() => setIsDrawerOpen(false)}
             >
                 {renderDrawerContent()}
             </SwipeableDrawer>

@@ -14,7 +14,7 @@ import FreeAccountsPage from './pages/People/FreeAccountsPage';
 import LinkedAccountsPage from './pages/People/LinkedAccountsPage';
 import RegisteredPage from './pages/Product/RegisteredPage';
 import AuthorizedPage from './pages/Product/AuthorizedPage';
-import GroupManagementPage from './pages/Product/GroupManagementPage';
+import GroupAssignmentPage from './pages/Product/GroupAssignmentPage';
 import MyOrderPage from './pages/Order/MyOrderPage';
 import ReportPage from './pages/Order/ReportPage';
 import SummaryPage from './pages/Commission/SummaryPage';
@@ -54,8 +54,8 @@ function App() {
 
             {/*/!* Product *!/*/}
             <Route path="product/registered" element={<RegisteredPage />} />
-            {/*<Route path="product/authorized" element={<AuthorizedPage />} />*/}
-            {/*<Route path="product/group-management" element={<GroupManagementPage />} />*/}
+            <Route path="product/authorized" element={<AuthorizedPage />} />
+            <Route path="product/group-assignment" element={<GroupAssignmentPage />} />
 
             {/*/!* Order *!/*/}
             {/*<Route path="order/my-order" element={<MyOrderPage />} />*/}

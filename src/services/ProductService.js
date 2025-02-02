@@ -8,12 +8,13 @@ const ProductService = {
      * @param {string} name - The name of the product.
      * @param {string} description - The description of the product.
      * @param {string} detail - Additional details about the product.
+     * @param {string} customerInfoTemplate - customer info required by the provider
      * @param {string} accountId - UUID of the account registering the product.
      * @returns {Promise<Object>} - The registered product.
      */
-    registerProduct: async (name, description, detail, accountId) => {
+    registerProduct: async (name, description, detail, customerInfoTemplate, accountId) => {
         const response = await axiosInstance.post(`${API_URL}/register`, null, {
-            params: { name, description, detail, accountId },
+            params: {name, description, detail, customerInfoTemplate, accountId},
         });
         return response.data;
     },
@@ -37,7 +38,7 @@ const ProductService = {
      */
     modifyProduct: async (productId, name, description, detail) => {
         const response = await axiosInstance.put(`${API_URL}/modify/${productId}`, null, {
-            params: { name, description, detail },
+            params: {name, description, detail},
         });
         return response.data;
     },
@@ -70,7 +71,7 @@ const ProductService = {
      */
     createProductGroup: async (name, userId) => {
         const response = await axiosInstance.post(`${API_URL}/group/create`, null, {
-            params: { name, userId },
+            params: {name, userId},
         });
         return response.data;
     },
@@ -84,7 +85,7 @@ const ProductService = {
      */
     addProductToGroup: async (productAuthId, userId, groupId) => {
         await axiosInstance.post(`${API_URL}/group/add`, null, {
-            params: { productAuthId, userId, groupId },
+            params: {productAuthId, userId, groupId},
         });
     },
 
@@ -96,8 +97,25 @@ const ProductService = {
      */
     removeProductFromGroup: async (productAuthId, groupId) => {
         await axiosInstance.delete(`${API_URL}/group/remove`, {
-            params: { productAuthId, groupId },
+            params: {productAuthId, groupId},
         });
+    },
+
+    deleteGroup: async (groupId) => {
+        try {
+            await axiosInstance.delete(`${API_URL}/group/delete/${groupId}`);
+        } catch (error) {
+            console.error('Error deleting group:', error);
+        }
+    },
+
+    getGroups: async (userId) => {
+        try {
+            const response = await axiosInstance.get(`${API_URL}/group/owner/${userId}`)
+            return response.data
+        } catch (error) {
+            console.error('Error getting group:', error);
+        }
     },
 
     /**
@@ -109,6 +127,27 @@ const ProductService = {
         const response = await axiosInstance.get(`${API_URL}/group/list/${groupId}`);
         return response.data;
     },
+
+    addUserToGroup: async (userId, childId, groupId) => {
+        const response = await axiosInstance.post(`${API_URL}/group/${groupId}/assign`, null, {
+            params: {userId, childId}
+        })
+        return response.data;
+    },
+
+    removeUserFromGroup: async (childId, groupId) => {
+        await axiosInstance.delete(`${API_URL}/group/${groupId}/users/${childId}`);
+    },
+
+    getUsersByGroup: async (groupId) => {
+        const response = await axiosInstance.get(`${API_URL}/group/${groupId}/users`);
+        return response.data;
+    },
+
+    getGroupAssignedToUser: async (userId) => {
+        const response = await axiosInstance.get(`${API_URL}/group/user/${userId}`);
+        return response.data;
+    }
 };
 
 export default ProductService;
