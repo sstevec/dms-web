@@ -109,6 +109,17 @@ const ProductService = {
         }
     },
 
+    updateGroup: async (groupId, newName) => {
+        try {
+            const response = await axiosInstance.post(`${API_URL}/group/update/${groupId}`, null, {
+                params: {groupId, newName}
+            })
+            return response.data;
+        } catch (error) {
+            console.error('Error update group:', error);
+        }
+    },
+
     getGroups: async (userId) => {
         try {
             const response = await axiosInstance.get(`${API_URL}/group/owner/${userId}`)
@@ -144,8 +155,10 @@ const ProductService = {
         return response.data;
     },
 
-    getGroupAssignedToUser: async (userId) => {
-        const response = await axiosInstance.get(`${API_URL}/group/user/${userId}`);
+    getGroupAssignedToUser: async (userId, groupOwnerId) => {
+        const response = await axiosInstance.post(`${API_URL}/group/user/${userId}`, null, {
+            params: {groupOwnerId}
+        });
         return response.data;
     }
 };

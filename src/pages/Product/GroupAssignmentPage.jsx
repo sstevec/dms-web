@@ -177,7 +177,7 @@ const GroupAssignmentPage = () => {
 
 
     const handleUserInfoDisplay = async (user) => {
-        const groups = await productService.getGroupAssignedToUser(user.id)
+        const groups = await productService.getGroupAssignedToUser(user.id, userId)
         setDisplayedUser({
             assignedGroups: groups
         });

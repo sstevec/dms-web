@@ -137,14 +137,14 @@ const RegisteredPage = () => {
                     userId
                 );
 
-                alert('Product added successfully!');
+                showAlert('Product added successfully!');
             } else if (drawerMode === "edit") {
                 await ProductService.modifyProduct(
                     editProductId,
                     newProduct.name.trim(),
                     newProduct.description.trim(),
                     productDetail)
-                alert('Product edited successfully!');
+                showAlert('Product edited successfully!');
                 setEditProductId("");
             }
 
@@ -162,7 +162,7 @@ const RegisteredPage = () => {
             setIsDrawerOpen(false);
         } catch (error) {
             console.error('Error adding product:', error);
-            alert('Failed to add product.');
+            showAlert('Failed to add product.', "error");
         }
     };
 
@@ -217,11 +217,11 @@ const RegisteredPage = () => {
 
         try {
             await ProductService.deleteProduct(productToDelete);
-            alert('Product deleted successfully!');
+            showAlert('Product deleted successfully!');
             fetchProducts(); // Refresh the product list
         } catch (error) {
             console.error('Error deleting product:', error);
-            alert('Failed to delete product.');
+            showAlert('Failed to delete product.', "error");
         } finally {
             closeDeleteDialog();
         }

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {
     Box,
     Button,
@@ -8,6 +8,7 @@ import {
     DialogContent,
     DialogTitle,
     FormControlLabel,
+    IconButton,
     Table,
     TableBody,
     TableCell,
@@ -19,14 +20,20 @@ import {
 import CachedTwoToneIcon from '@mui/icons-material/CachedTwoTone';
 import MailOutlineIcon from '@mui/icons-material/MailOutline';
 import UserService from '../../services/UserService';
+import {useOutletContext} from "react-router-dom";
+import {ClearOutlined} from "@mui/icons-material";
 
 const LinkedAccountsPage = () => {
+    const {showAlert} = useOutletContext();
+
     const [accounts, setAccounts] = useState([]);
     const [filteredAccounts, setFilteredAccounts] = useState([]);
     const [filters, setFilters] = useState(['Free Accounts']);
     const [isFilterDialogOpen, setIsFilterDialogOpen] = useState(false);
     const [searchKeyword, setSearchKeyword] = useState('');
     const [isInviteDialogOpen, setIsInviteDialogOpen] = useState(false);
+    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+    const [selectedAccountInfo, setSelectedAccountInfo] = useState({});
 
     const [guestEmail, setGuestEmail] = useState('');
     const email = localStorage.getItem('dms_login_email');
@@ -59,11 +66,32 @@ const LinkedAccountsPage = () => {
     const handleSendInvitation = async () => {
         try {
             await UserService.sendInvitation(email, guestEmail);
-            alert('Invitation sent successfully!');
+            showAlert('Invitation sent successfully!');
             setIsInviteDialogOpen(false);
         } catch (error) {
-            console.error('Error sending invitation:', error);
-            alert('Failed to send invitation.');
+            showAlert('Failed to send invitation.', "error");
+        }
+    };
+
+    const openDeleteDialog = (accountId, name, relation) => {
+        setSelectedAccountInfo({id: accountId, name: name, relation: relation});
+        setIsDeleteDialogOpen(true);
+    };
+
+    const handleLinkDelete = async () => {
+        try{
+            if (selectedAccountInfo.relation === "Provider") {
+                await UserService.deleteLink(selectedAccountInfo.id, userId);
+                showAlert("Link deleted successfully!");
+            } else if(selectedAccountInfo.relation === "Distributor") {
+                await UserService.deleteLink(userId, selectedAccountInfo.id);
+                showAlert("Link deleted successfully!");
+            } else {
+                showAlert("Cannot delete link with free accounts!", "warning");
+            }
+            setIsDeleteDialogOpen(false)
+        } catch (error) {
+            showAlert('Failed to delete link.', "error");
         }
     };
 
@@ -132,6 +160,7 @@ const LinkedAccountsPage = () => {
                         <TableCell>Email</TableCell>
                         <TableCell>Role</TableCell>
                         <TableCell>Create Time</TableCell>
+                        <TableCell>Action</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
@@ -141,6 +170,13 @@ const LinkedAccountsPage = () => {
                             <TableCell>{account.email}</TableCell>
                             <TableCell>{account.relation}</TableCell>
                             <TableCell>{account.createdAt}</TableCell>
+                            <TableCell>
+                                <IconButton onClick={() => {
+                                    openDeleteDialog(account.id, account.name, account.relation)
+                                }}>
+                                    <ClearOutlined/>
+                                </IconButton>
+                            </TableCell>
                         </TableRow>
                     ))}
                 </TableBody>
@@ -219,6 +255,22 @@ const LinkedAccountsPage = () => {
                     <Button onClick={() => setIsFilterDialogOpen(false)}>Cancel</Button>
                     <Button onClick={() => setIsFilterDialogOpen(false)} color="primary">
                         Apply
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+            {/* Delete Dialog */}
+            <Dialog open={isDeleteDialogOpen} onClose={() => setIsDeleteDialogOpen(false)}>
+                <DialogTitle>Delete Link</DialogTitle>
+                <DialogContent>
+                    <Typography>
+                        Are you sure, you want to delete the link with {selectedAccountInfo.name} ?
+                    </Typography>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setIsDeleteDialogOpen(false)}>Cancel</Button>
+                    <Button onClick={handleLinkDelete} color="primary">
+                        Confirm
                     </Button>
                 </DialogActions>
             </Dialog>

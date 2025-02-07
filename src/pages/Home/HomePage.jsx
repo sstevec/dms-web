@@ -18,13 +18,15 @@ const HomePage = () => {
             try {
                 const userInfo = await UserService.getAccountInfo(email);
                 localStorage.setItem("dms_user_id", userInfo.id)
+                localStorage.setItem("dms_user_name", userInfo.name)
+                console.log(userInfo)
             } catch (error) {
                 showAlert('Error fetching user info or accounts');
             }
         };
         navigate("/home/Dashboard");
         fetchUserInfo();
-    }, [email]);
+    }, []);
 
     const toggleMenuCollapse = () => {
         setIsCollapsed((prev) => !prev);

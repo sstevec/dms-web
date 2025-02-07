@@ -202,7 +202,7 @@ const AuthorizedPage = () => {
         }
 
         try {
-            // TODO call update name function here
+            await productService.updateGroup(groupId, newGroupName)
             showAlert('Group info updated successfully!');
 
             // Fetch updated group list

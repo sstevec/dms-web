@@ -25,7 +25,8 @@ const SecondaryTopBar = ({toggleMenuCollapse}) => {
     const [isInvitationDialogOpen, setInvitationDialogOpen] = useState(false);
     const [invitorEmail, setInvitorEmail] = useState('')
 
-    const userId = localStorage.getItem('dms_user_id'); // Get user ID from localStorage
+    const userId = localStorage.getItem('dms_user_id');
+    const userName = localStorage.getItem('dms_user_name');
 
     // Fetch unread notifications on load
     useEffect(() => {
@@ -201,8 +202,24 @@ const SecondaryTopBar = ({toggleMenuCollapse}) => {
                         </Popover>
 
                         {/* User Profile */}
-                        <IconButton>
+                        <IconButton
+                            sx={{
+                                backgroundColor: 'transparent', // Remove background on hover
+                                '&:hover': {
+                                    backgroundColor: 'transparent', // Ensure no hover effect
+                                },
+                            }}>
                             <PersonIcon/>
+                            <Typography
+                                sx={{
+                                    fontFamily: 'Arial, sans-serif',
+                                    fontSize: '0.8rem',
+                                    color: 'grey.600',
+                                    fontWeight: "bold"
+                                }}
+                            >
+                                {userName}
+                            </Typography>
                         </IconButton>
                     </Box>
                 </Toolbar>

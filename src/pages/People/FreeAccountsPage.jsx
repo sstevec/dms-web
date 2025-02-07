@@ -16,8 +16,11 @@ import UserService from '../../services/UserService';
 import CachedTwoToneIcon from '@mui/icons-material/CachedTwoTone';
 import AddIcon from '@mui/icons-material/Add';
 import EditTwoToneIcon from '@mui/icons-material/EditTwoTone';
+import {useOutletContext} from "react-router-dom";
 
 const FreeAccountsPage = () => {
+    const {showAlert} = useOutletContext();
+
     const [accounts, setAccounts] = useState([]);
     const [filteredAccounts, setFilteredAccounts] = useState([]);
     const [searchKeyword, setSearchKeyword] = useState('');
@@ -93,12 +96,12 @@ const FreeAccountsPage = () => {
     const handleAddFreeAccount = async () => {
         try {
             await UserService.addFreeUser(newAccount.name, newAccount.password, newAccount.email, userId);
-            alert('Free account added successfully!');
+            showAlert('Free account added successfully!');
             closeDrawer();
             handleRefresh(); // Refresh the accounts list
         } catch (error) {
             console.error('Error adding free account:', error);
-            alert('Failed to add free account.');
+            showAlert('Failed to add free account.', "error");
         }
     };
 
@@ -106,12 +109,12 @@ const FreeAccountsPage = () => {
     const handleModifyAccount = async () => {
         try {
             await UserService.modifyUser(drawerData.id, newAccount.name, newAccount.password, newAccount.email);
-            alert('Account modified successfully!');
+            showAlert('Account modified successfully!');
             closeDrawer();
             handleRefresh(); // Refresh the accounts list
         } catch (error) {
             console.error('Error modifying account:', error);
-            alert('Failed to modify account.');
+            showAlert('Failed to modify account.', "error");
         }
     };
 
